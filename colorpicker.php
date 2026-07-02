@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Color Picker
- * Description:       Adds a Color Picker sidebar to the block editor for picking, copying, and applying colors to blocks.
- * Version:           1.0.0
+ * Description:       Adds a "Pick from screen" eyedropper to the block editor's color controls, for sampling any color on screen.
+ * Version:           1.1.0
  * Requires at least: 6.6
  * Requires PHP:      7.2
  * Author:            Muhammad Muhsin
@@ -15,33 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'COLORPICKER_VERSION', '1.1.0' );
+
 /**
- * Enqueue the editor script and styles for the Color Picker sidebar.
+ * Enqueue the editor script and styles for the eyedropper integration.
  */
 function colorpicker_enqueue_editor_assets() {
-	$asset_file = plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
-
-	if ( ! file_exists( $asset_file ) ) {
-		return;
-	}
-
-	$asset = include $asset_file;
-
 	wp_enqueue_script(
 		'colorpicker-editor',
-		plugins_url( 'build/index.js', __FILE__ ),
-		$asset['dependencies'],
-		$asset['version'],
+		plugins_url( 'colorpicker.js', __FILE__ ),
+		array( 'wp-dom-ready', 'wp-i18n' ),
+		COLORPICKER_VERSION,
 		true
 	);
 
-	if ( file_exists( plugin_dir_path( __FILE__ ) . 'build/style-index.css' ) ) {
-		wp_enqueue_style(
-			'colorpicker-editor',
-			plugins_url( 'build/style-index.css', __FILE__ ),
-			array( 'wp-components' ),
-			$asset['version']
-		);
-	}
+	wp_enqueue_style(
+		'colorpicker-editor',
+		plugins_url( 'colorpicker.css', __FILE__ ),
+		array( 'wp-components' ),
+		COLORPICKER_VERSION
+	);
 }
 add_action( 'enqueue_block_editor_assets', 'colorpicker_enqueue_editor_assets' );

@@ -26,6 +26,14 @@ WordPress core doesn't expose extension points for the internals of its `ColorPa
 
 No block attributes are modified directly — the editor's normal state flow handles everything, including undo history.
 
+The plugin is intentionally dependency-free: no build step, no npm, no bundler. Just three files:
+
+| File | Purpose |
+|------|---------|
+| `colorpicker.php` | Plugin bootstrap; enqueues the assets in the editor |
+| `colorpicker.js` | Observer + button injection into core color UIs |
+| `colorpicker.css` | Button styles |
+
 ## Browser support
 
 The EyeDropper API is available in Chromium-based browsers (Chrome, Edge, Opera, Arc, Brave). In browsers without support (Firefox, Safari), the button simply doesn't render — nothing breaks.
@@ -40,26 +48,6 @@ The EyeDropper API is available in Chromium-based browsers (Chrome, Edge, Opera,
    ```
 
 2. Activate **Color Picker** from the Plugins screen (or with WP-CLI: `wp plugin activate colorpicker`).
-
-The `build/` directory is committed, so no build step is needed for regular use.
-
-## Development
-
-Built with [`@wordpress/scripts`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/).
-
-```bash
-npm install
-npm run build   # production build
-npm run start   # development watch mode
-```
-
-Source lives in `src/`:
-
-| File | Purpose |
-|------|---------|
-| `src/index.js` | Entry point |
-| `src/core-eyedropper.js` | Observer + button injection into core color UIs |
-| `src/style.scss` | Button styles |
 
 ## Requirements
 
