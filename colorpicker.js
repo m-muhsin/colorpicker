@@ -22,14 +22,28 @@
 		'.block-editor-color-gradient-control__panel, .components-color-palette';
 
 	function openEyedropper() {
-		return new window.EyeDropper().open().then(
-			function ( result ) {
-				return result.sRGBHex;
-			},
-			function () {
-				return null; // User dismissed the eyedropper.
-			}
-		);
+		return new window.EyeDropper()
+			.open()
+			.then(
+				function ( result ) {
+					return result.sRGBHex;
+				},
+				function () {
+					return null; // User dismissed the eyedropper.
+				}
+			)
+			.then( function ( sRGBHex ) {
+				// Defer past the promise-resolution microtask. On
+				// Windows, Chrome tears down the native eyedropper
+				// overlay as the promise resolves; triggering React
+				// updates during that teardown has frozen the window.
+				// 100ms gives the overlay time to fully close.
+				return new Promise( function ( resolve ) {
+					setTimeout( function () {
+						resolve( sRGBHex );
+					}, 100 );
+				} );
+			} );
 	}
 
 	function makeButton( doc, onClick, extraClass ) {
@@ -86,7 +100,10 @@
 
 		var button = makeButton( container.ownerDocument, function () {
 			openEyedropper().then( function ( sRGBHex ) {
-				if ( ! sRGBHex ) {
+				// Bail if the popover was dismissed while the
+				// eyedropper was open (the native overlay steals
+				// window focus on Windows, which can close it).
+				if ( ! sRGBHex || ! container.isConnected ) {
 					return;
 				}
 				// Resolve onChange at pick time so tab switches don't
@@ -127,7 +144,10 @@
 
 	function pickAndApplyHex( picker ) {
 		openEyedropper().then( function ( sRGBHex ) {
-			if ( ! sRGBHex ) {
+			// Bail if the picker was dismissed while the eyedropper
+			// was open (the native overlay steals window focus on
+			// Windows, which can close it).
+			if ( ! sRGBHex || ! picker.isConnected ) {
 				return;
 			}
 
@@ -177,12 +197,19 @@
 		}
 
 		var observer = new MutationObserver( function () {
-			document
-				.querySelectorAll( PALETTE_SELECTORS )
-				.forEach( injectPaletteButton );
-			document
-				.querySelectorAll( '.components-color-picker' )
-				.forEach( injectPickerButton );
+			// Never let an exception escape the observer callback: an
+			// error thrown while React is mid-render could otherwise
+			// cascade into repeated mutation/error cycles.
+			try {
+				document
+					.querySelectorAll( PALETTE_SELECTORS )
+					.forEach( injectPaletteButton );
+				document
+					.querySelectorAll( '.components-color-picker' )
+					.forEach( injectPickerButton );
+			} catch ( error ) {
+				// Swallow; the next mutation batch will retry.
+			}
 		} );
 
 		observer.observe( document.body, { childList: true, subtree: true } );

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Color Picker
  * Description:       Adds a "Pick from screen" eyedropper to the block editor's color controls, for sampling any color on screen.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.6
  * Requires PHP:      7.2
  * Author:            Muhammad Muhsin
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'COLORPICKER_VERSION', '1.1.0' );
+define( 'COLORPICKER_VERSION', '1.1.1' );
 
 /**
  * Enqueue the editor script and styles for the eyedropper integration.
