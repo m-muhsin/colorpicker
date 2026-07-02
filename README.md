@@ -5,6 +5,8 @@ A WordPress plugin that adds a **"Pick from screen"** eyedropper button to the b
 ![WordPress](https://img.shields.io/badge/WordPress-6.6%2B-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--2.0--or--later-green.svg)
 
+![Color Picker demo — sampling a color from the screen and applying it in the block editor](demo.gif)
+
 ## What it does
 
 The eyedropper button appears in every core color UI in the block editor:
