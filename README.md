@@ -16,6 +16,8 @@ The eyedropper button appears in every core color UI in the block editor:
 
 Click the button, your cursor becomes a magnifying loupe, and clicking any pixel on screen applies that color to whatever setting the picker is editing. Press <kbd>Escape</kbd> to cancel.
 
+![The "Pick from screen" button in the color palette popover and the custom color picker, sampling a color from an image in the editor](screenshot.png)
+
 ## How it works
 
 WordPress core doesn't expose extension points for the internals of its `ColorPalette` and `ColorPicker` components, so the plugin:
